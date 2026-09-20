@@ -689,32 +689,35 @@ class Game {
         document.activeElement.blur();
       }
 
-      // ★ [1]〜[8] キーで各ステージへ即時ワープ（テスト用）
-      if (e.code === 'Digit1') { this.warpToStage(1); return; }
-      if (e.code === 'Digit2') { this.warpToStage(2); return; }
-      if (e.code === 'Digit3') { this.warpToStage(3); return; }
-      if (e.code === 'Digit4') { this.warpToStage(4); return; }
-      if (e.code === 'Digit5') { this.warpToStage(5); return; }
-      if (e.code === 'Digit6') { this.warpToStage(6); return; }
-      if (e.code === 'Digit7') { this.warpToStage(7); return; }
-      if (e.code === 'Digit8') { this.warpToStage(8); return; }
+      // ⚡ 開発・テスト用コマンド群（※?debug=1 または Shift+D のデバッグモード時のみ有効）
+      if (this.debugMode) {
+        // ★ [1]〜[8] キーで各ステージへ即時ワープ（テスト用）
+        if (e.code === 'Digit1') { this.warpToStage(1); return; }
+        if (e.code === 'Digit2') { this.warpToStage(2); return; }
+        if (e.code === 'Digit3') { this.warpToStage(3); return; }
+        if (e.code === 'Digit4') { this.warpToStage(4); return; }
+        if (e.code === 'Digit5') { this.warpToStage(5); return; }
+        if (e.code === 'Digit6') { this.warpToStage(6); return; }
+        if (e.code === 'Digit7') { this.warpToStage(7); return; }
+        if (e.code === 'Digit8') { this.warpToStage(8); return; }
 
-      // ★ [B]キーでいつでも現在ステージのボス戦へ直行（テスト用）
-      if (e.code === 'KeyB') {
-        this.warpToBoss();
-        return;
-      }
+        // ★ [B]キーでいつでも現在ステージのボス戦へ直行（テスト用）
+        if (e.code === 'KeyB') {
+          this.warpToBoss();
+          return;
+        }
 
-      // ★ [F]キーでいつでも無敵フィーバーモード発動（テスト用）
-      if (e.code === 'KeyF' && this.state === 'PLAYING') {
-        this.player.activateFever();
-        return;
-      }
+        // ★ [F]キーでいつでも無敵フィーバーモード発動（テスト用）
+        if (e.code === 'KeyF' && this.state === 'PLAYING') {
+          this.player.activateFever();
+          return;
+        }
 
-      // ★ [S]キーでいつでもスーパー形態のON/OFF切り替え（テスト・検証用）
-      if (e.code === 'KeyS' && (this.state === 'PLAYING' || this.state === 'BOSS_BATTLE')) {
-        this.toggleSuperForm();
-        return;
+        // ★ [S]キーでいつでもスーパー形態のON/OFF切り替え（テスト・検証用）
+        if (e.code === 'KeyS' && (this.state === 'PLAYING' || this.state === 'BOSS_BATTLE')) {
+          this.toggleSuperForm();
+          return;
+        }
       }
 
       if (this.state === 'TITLE') {
