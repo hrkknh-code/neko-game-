@@ -23,6 +23,23 @@ function drawEnemyDropShadow(ctx, entity, cameraX) {
   }
 }
 
+// 🌟 全敵キャラ共通のAssetManager画像取得＆ロード判定ヘルパー
+function getEnemySprite(src) {
+  if (typeof AssetManager !== 'undefined') {
+    const img = AssetManager.getImage(src);
+    const loaded = Boolean(img && (img._loaded || (img.complete && img.naturalWidth > 0)));
+    return { img, loaded };
+  }
+  const img = new Image();
+  img.src = src;
+  return { img, loaded: false };
+}
+
+function isEnemySpriteReady(img, loadedFlag) {
+  if (!img) return false;
+  return Boolean(loadedFlag || img._loaded || (img.complete && img.naturalWidth > 0));
+}
+
 
 // =============================================================================
 // 🐾 ステージ1: 執事ネズミ（ButlerMouse）
@@ -40,15 +57,16 @@ class ButlerMouse {
     this.deathTimer = 0;
     this.walkAnimTimer = Math.random() * 10;
 
-    this.spriteImg = new Image();
-    this.spriteLoaded = false;
-    this.loadSprite();
+    const res = getEnemySprite('assets/mouse_spritesheet.png');
+    this.spriteImg = res.img;
+    this.spriteLoaded = res.loaded;
+    if (!this.spriteLoaded && this.spriteImg && this.spriteImg.addEventListener) {
+      this.spriteImg.addEventListener('load', () => { this.spriteLoaded = true; });
+    }
   }
 
   loadSprite() {
-    this.spriteImg.onload = () => { this.spriteLoaded = true; };
-    this.spriteImg.onerror = (e) => { console.error('Failed to load mouse sprite:', e); };
-    this.spriteImg.src = 'assets/mouse_spritesheet.png';
+    this.spriteLoaded = isEnemySpriteReady(this.spriteImg, this.spriteLoaded);
   }
 
   update(stage) {
@@ -91,7 +109,7 @@ class ButlerMouse {
     ctx.translate(centerX, centerY);
     ctx.scale(this.vx >= 0 ? 1 : -1, 1);
 
-    if (this.spriteLoaded && this.spriteImg) {
+    if (isEnemySpriteReady(this.spriteImg, this.spriteLoaded)) {
       if (this.isDead) {
         const sx = 1030; const sy = 260; const sw = 290; const sh = 245;
         const squashProgress = 1 - (this.deathTimer / 30);
@@ -131,11 +149,6 @@ class ButlerMouse {
           -renderW / 2, -renderH / 2 + walkBounce, renderW, renderH
         );
       }
-    } else {
-      ctx.fillStyle = '#9e9e9e';
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 18, 14, 0, 0, Math.PI * 2);
-      ctx.fill();
     }
     ctx.restore();
   }
@@ -157,10 +170,12 @@ class CartMouse {
     this.deathTimer = 0;
     this.animTimer = Math.random() * 10;
 
-    this.spriteImg = new Image();
-    this.spriteLoaded = false;
-    this.spriteImg.onload = () => { this.spriteLoaded = true; };
-    this.spriteImg.src = 'assets/mouse2_sheet.png';
+    const res = getEnemySprite('assets/mouse2_sheet.png');
+    this.spriteImg = res.img;
+    this.spriteLoaded = res.loaded;
+    if (!this.spriteLoaded && this.spriteImg && this.spriteImg.addEventListener) {
+      this.spriteImg.addEventListener('load', () => { this.spriteLoaded = true; });
+    }
   }
 
   update(stage) {
@@ -217,7 +232,7 @@ class CartMouse {
     ctx.translate(centerX, centerY);
     ctx.scale(this.vx >= 0 ? 1 : -1, 1);
 
-    if (this.spriteLoaded && this.spriteImg) {
+    if (isEnemySpriteReady(this.spriteImg, this.spriteLoaded)) {
       const sheetW = this.spriteImg.naturalWidth || this.spriteImg.width;
       const sheetH = this.spriteImg.naturalHeight || this.spriteImg.height;
       const colW = sheetW / 4;
@@ -241,11 +256,6 @@ class CartMouse {
         col * colW, sy, colW, sh,
         -renderW / 2, -renderH / 2, renderW, renderH
       );
-    } else {
-      ctx.fillStyle = '#adb5bd';
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 18, 14, 0, 0, Math.PI * 2);
-      ctx.fill();
     }
 
     ctx.restore();
@@ -269,10 +279,12 @@ class ClockMouse {
     this.deathTimer = 0;
     this.animTimer = Math.random() * 20;
 
-    this.spriteImg = new Image();
-    this.spriteLoaded = false;
-    this.spriteImg.onload = () => { this.spriteLoaded = true; };
-    this.spriteImg.src = 'assets/mouse3_sheet.png';
+    const res = getEnemySprite('assets/mouse3_sheet.png');
+    this.spriteImg = res.img;
+    this.spriteLoaded = res.loaded;
+    if (!this.spriteLoaded && this.spriteImg && this.spriteImg.addEventListener) {
+      this.spriteImg.addEventListener('load', () => { this.spriteLoaded = true; });
+    }
   }
 
   update(stage) {
@@ -312,7 +324,7 @@ class ClockMouse {
     ctx.translate(centerX, centerY);
     ctx.scale(this.vx >= 0 ? 1 : -1, 1);
 
-    if (this.spriteLoaded && this.spriteImg) {
+    if (isEnemySpriteReady(this.spriteImg, this.spriteLoaded)) {
       const sheetW = this.spriteImg.naturalWidth || this.spriteImg.width;
       const sheetH = this.spriteImg.naturalHeight || this.spriteImg.height;
       const colW = sheetW / 4;
@@ -336,11 +348,6 @@ class ClockMouse {
         col * colW, sy, colW, sh,
         -renderW / 2, -renderH / 2, renderW, renderH
       );
-    } else {
-      ctx.fillStyle = '#6c757d';
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 18, 14, 0, 0, Math.PI * 2);
-      ctx.fill();
     }
 
     ctx.restore();
@@ -363,10 +370,12 @@ class ChefMouse {
     this.deathTimer = 0;
     this.animTimer = Math.random() * 10;
 
-    this.spriteImg = new Image();
-    this.spriteLoaded = false;
-    this.spriteImg.onload = () => { this.spriteLoaded = true; };
-    this.spriteImg.src = 'assets/mouse4_sheet.png';
+    const res = getEnemySprite('assets/mouse4_sheet.png');
+    this.spriteImg = res.img;
+    this.spriteLoaded = res.loaded;
+    if (!this.spriteLoaded && this.spriteImg && this.spriteImg.addEventListener) {
+      this.spriteImg.addEventListener('load', () => { this.spriteLoaded = true; });
+    }
   }
 
   update(stage) {
@@ -405,7 +414,7 @@ class ChefMouse {
     ctx.translate(centerX, centerY);
     ctx.scale(this.vx >= 0 ? 1 : -1, 1);
 
-    if (this.spriteLoaded && this.spriteImg) {
+    if (isEnemySpriteReady(this.spriteImg, this.spriteLoaded)) {
       const sheetW = this.spriteImg.naturalWidth || this.spriteImg.width;
       const sheetH = this.spriteImg.naturalHeight || this.spriteImg.height;
       const colW = sheetW / 4;
@@ -429,11 +438,6 @@ class ChefMouse {
         col * colW, sy, colW, sh,
         -renderW / 2, -renderH / 2, renderW, renderH
       );
-    } else {
-      ctx.fillStyle = '#adb5bd';
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 18, 14, 0, 0, Math.PI * 2);
-      ctx.fill();
     }
     ctx.restore();
   }
@@ -457,10 +461,12 @@ class TubeMouse {
     this.deathTimer = 0;
     this.animTimer = Math.random() * 10;
 
-    this.spriteImg = new Image();
-    this.spriteLoaded = false;
-    this.spriteImg.onload = () => { this.spriteLoaded = true; };
-    this.spriteImg.src = 'assets/mouse5_sheet.png';
+    const res = getEnemySprite('assets/mouse5_sheet.png');
+    this.spriteImg = res.img;
+    this.spriteLoaded = res.loaded;
+    if (!this.spriteLoaded && this.spriteImg && this.spriteImg.addEventListener) {
+      this.spriteImg.addEventListener('load', () => { this.spriteLoaded = true; });
+    }
   }
 
   update(stage) {
@@ -525,7 +531,7 @@ class TubeMouse {
     ctx.translate(centerX, centerY);
     ctx.scale(this.vx >= 0 ? 1 : -1, 1);
 
-    if (this.spriteLoaded && this.spriteImg) {
+    if (isEnemySpriteReady(this.spriteImg, this.spriteLoaded)) {
       const sheetW = this.spriteImg.naturalWidth || this.spriteImg.width;
       const sheetH = this.spriteImg.naturalHeight || this.spriteImg.height;
       const colW = sheetW / 4;
@@ -549,11 +555,6 @@ class TubeMouse {
         col * colW, sy, colW, sh,
         -renderW / 2, -renderH / 2, renderW, renderH
       );
-    } else {
-      ctx.fillStyle = '#00b4d8';
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 18, 14, 0, 0, Math.PI * 2);
-      ctx.fill();
     }
     ctx.restore();
   }
@@ -576,10 +577,12 @@ class GhostMouse {
     this.deathTimer = 0;
     this.animTimer = Math.random() * 20;
 
-    this.spriteImg = new Image();
-    this.spriteLoaded = false;
-    this.spriteImg.onload = () => { this.spriteLoaded = true; };
-    this.spriteImg.src = 'assets/mouse6_sheet.png';
+    const res = getEnemySprite('assets/mouse6_sheet.png');
+    this.spriteImg = res.img;
+    this.spriteLoaded = res.loaded;
+    if (!this.spriteLoaded && this.spriteImg && this.spriteImg.addEventListener) {
+      this.spriteImg.addEventListener('load', () => { this.spriteLoaded = true; });
+    }
   }
 
   update(stage) {
@@ -614,7 +617,7 @@ class GhostMouse {
     ctx.translate(centerX, centerY);
     ctx.scale(this.vx >= 0 ? 1 : -1, 1);
 
-    if (this.spriteLoaded && this.spriteImg) {
+    if (isEnemySpriteReady(this.spriteImg, this.spriteLoaded)) {
       const sheetW = this.spriteImg.naturalWidth || this.spriteImg.width;
       const sheetH = this.spriteImg.naturalHeight || this.spriteImg.height;
       const colW = sheetW / 4;
@@ -638,11 +641,6 @@ class GhostMouse {
         col * colW, sy, colW, sh,
         -renderW / 2, -renderH / 2, renderW, renderH
       );
-    } else {
-      ctx.fillStyle = '#f8f9fa';
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 18, 14, 0, 0, Math.PI * 2);
-      ctx.fill();
     }
     ctx.restore();
   }
@@ -665,10 +663,12 @@ class SpaceMouse {
     this.deathTimer = 0;
     this.animTimer = Math.random() * 10;
 
-    this.spriteImg = new Image();
-    this.spriteLoaded = false;
-    this.spriteImg.onload = () => { this.spriteLoaded = true; };
-    this.spriteImg.src = 'assets/mouse7_sheet.png';
+    const res = getEnemySprite('assets/mouse7_sheet.png');
+    this.spriteImg = res.img;
+    this.spriteLoaded = res.loaded;
+    if (!this.spriteLoaded && this.spriteImg && this.spriteImg.addEventListener) {
+      this.spriteImg.addEventListener('load', () => { this.spriteLoaded = true; });
+    }
   }
 
   update(stage) {
@@ -725,7 +725,7 @@ class SpaceMouse {
     ctx.translate(centerX, centerY);
     ctx.scale(this.vx >= 0 ? 1 : -1, 1);
 
-    if (this.spriteLoaded && this.spriteImg) {
+    if (isEnemySpriteReady(this.spriteImg, this.spriteLoaded)) {
       const sheetW = this.spriteImg.naturalWidth || this.spriteImg.width;
       const sheetH = this.spriteImg.naturalHeight || this.spriteImg.height;
       const colW = sheetW / 4;
@@ -749,11 +749,6 @@ class SpaceMouse {
         col * colW + padX, padY, colW - padX * 2, rowH - padY * 2,
         -renderW / 2, -renderH / 2, renderW, renderH
       );
-    } else {
-      ctx.fillStyle = '#00b4d8';
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 18, 14, 0, 0, Math.PI * 2);
-      ctx.fill();
     }
     ctx.restore();
   }
@@ -775,10 +770,12 @@ class GuardMouse {
     this.deathTimer = 0;
     this.animTimer = Math.random() * 10;
 
-    this.spriteImg = new Image();
-    this.spriteLoaded = false;
-    this.spriteImg.onload = () => { this.spriteLoaded = true; };
-    this.spriteImg.src = 'assets/mouse8_sheet.png';
+    const res = getEnemySprite('assets/mouse8_sheet.png');
+    this.spriteImg = res.img;
+    this.spriteLoaded = res.loaded;
+    if (!this.spriteLoaded && this.spriteImg && this.spriteImg.addEventListener) {
+      this.spriteImg.addEventListener('load', () => { this.spriteLoaded = true; });
+    }
   }
 
   update(stage) {
@@ -817,7 +814,7 @@ class GuardMouse {
     ctx.translate(centerX, centerY);
     ctx.scale(this.vx >= 0 ? 1 : -1, 1);
 
-    if (this.spriteLoaded && this.spriteImg) {
+    if (isEnemySpriteReady(this.spriteImg, this.spriteLoaded)) {
       const sheetW = this.spriteImg.naturalWidth || this.spriteImg.width;
       const sheetH = this.spriteImg.naturalHeight || this.spriteImg.height;
       const colW = sheetW / 4;
@@ -841,11 +838,6 @@ class GuardMouse {
         col * colW + padX, padY, colW - padX * 2, rowH - padY * 2,
         -renderW / 2, -renderH / 2, renderW, renderH
       );
-    } else {
-      ctx.fillStyle = '#ffd166';
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 18, 14, 0, 0, Math.PI * 2);
-      ctx.fill();
     }
     ctx.restore();
   }

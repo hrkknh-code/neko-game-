@@ -292,13 +292,9 @@ class RankingManager {
 
     const nameInput = document.getElementById('inputPlayerName');
     if (nameInput) {
-      // ⌨️ 入力中のキー入力をゲーム側に奪われないよう完全保護
+      // ⌨️ 入力中のキー入力をゲーム側に奪われないよう完全保護（※IME変換確定時のEnter誤登録を防ぐため、送信はボタンクリックのみに限定）
       nameInput.addEventListener('keydown', (e) => {
         e.stopPropagation();
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          document.getElementById('btnSubmitScore').click();
-        }
       });
       nameInput.addEventListener('keyup', (e) => {
         e.stopPropagation();

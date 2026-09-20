@@ -254,4 +254,95 @@ const CONSTANTS = {
   }
 };
 
-window.CONSTANTS = CONSTANTS;
+// =========================================================================
+// 🚀 全画像プリローダー ＆ 静的アセットキャッシュ管理 (AssetManager)
+// =========================================================================
+class AssetManagerClass {
+  constructor() {
+    this.cache = {};
+    this.loadedCount = 0;
+    this.totalCount = 0;
+    this.allLoaded = false;
+  }
+
+  getImage(src) {
+    if (!src) return null;
+    if (this.cache[src]) return this.cache[src];
+    if (typeof Image === 'undefined') {
+      const mockImg = { src, complete: true, naturalWidth: 100, naturalHeight: 100, _loaded: true, addEventListener: () => {} };
+      this.cache[src] = mockImg;
+      return mockImg;
+    }
+    const img = new Image();
+    img._loaded = false;
+    img.onload = () => {
+      img._loaded = true;
+      this.loadedCount++;
+      if (this.loadedCount >= this.totalCount) {
+        this.allLoaded = true;
+      }
+    };
+    img.onerror = (e) => {
+      console.warn(`[AssetManager] Failed to load: ${src}`);
+    };
+    img.src = src;
+    if (img.complete && img.naturalWidth > 0) {
+      img._loaded = true;
+    }
+    this.cache[src] = img;
+    return img;
+  }
+
+  isLoaded(src) {
+    const img = this.cache[src];
+    if (!img) return false;
+    return Boolean(img._loaded || (img.complete && img.naturalWidth > 0));
+  }
+
+  preloadAll() {
+    if (typeof Image === 'undefined') return;
+    const assets = [
+      // 背景
+      'assets/stage1_palace_bg.jpg',
+      'assets/stage2_mall_bg.jpg',
+      'assets/stage3_clock_bg.jpg',
+      'assets/stage4_sushi_bg.jpg',
+      'assets/stage5_beach_bg.jpg',
+      'assets/stage6_ghost_bg.jpg',
+      'assets/stage7_space_bg.jpg',
+      'assets/stage8_castle_bg.jpg',
+      'assets/title_key_visual.jpg',
+      'assets/ending_visual.jpg',
+      // ザコ敵
+      'assets/mouse_spritesheet.png',
+      'assets/mouse2_sheet.png',
+      'assets/mouse3_sheet.png',
+      'assets/mouse4_sheet.png',
+      'assets/mouse5_sheet.png',
+      'assets/mouse6_sheet.png',
+      'assets/mouse7_sheet.png',
+      'assets/mouse8_sheet.png',
+      // ボス
+      'assets/boss_sheet.png',
+      'assets/boss2_sheet.png',
+      'assets/boss3_sheet.png',
+      'assets/boss4_sheet.png',
+      'assets/boss5_sheet.png',
+      'assets/boss6_sheet.png',
+      'assets/boss7_sheet.png',
+      'assets/boss8_sheet.png',
+      // プレイヤー
+      'assets/quadruped_cat.png'
+    ];
+    this.totalCount = assets.length;
+    assets.forEach(src => this.getImage(src));
+  }
+}
+
+const AssetManager = new AssetManagerClass();
+
+if (typeof window !== 'undefined') {
+  window.CONSTANTS = CONSTANTS;
+  window.AssetManager = AssetManager;
+  AssetManager.preloadAll();
+}

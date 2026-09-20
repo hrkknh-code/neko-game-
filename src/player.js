@@ -426,9 +426,14 @@ class Player {
     this.lastSafeGroundX = x;
     this.lastSafeGroundY = y;
 
-    // 透過PNGスプライト読み込み（ねこ用）
-    this.spriteImg = new Image();
-    this.spriteLoaded = false;
+    // 透過PNGスプライト読み込み（ねこ用・AssetManager連携）
+    if (typeof AssetManager !== 'undefined') {
+      this.spriteImg = AssetManager.getImage('assets/quadruped_cat.png');
+      this.spriteLoaded = Boolean(this.spriteImg && (this.spriteImg._loaded || (this.spriteImg.complete && this.spriteImg.naturalWidth > 0)));
+    } else {
+      this.spriteImg = new Image();
+      this.spriteLoaded = false;
+    }
     this.loadSprite();
   }
 
@@ -441,13 +446,22 @@ class Player {
   }
 
   loadSprite() {
-    this.spriteImg.onload = () => {
-      this.spriteLoaded = true;
-    };
-    this.spriteImg.onerror = (e) => {
-      console.error('Failed to load player sprite:', e);
-    };
-    this.spriteImg.src = 'assets/quadruped_cat.png';
+    if (this.spriteLoaded) return;
+    if (this.spriteImg) {
+      if (this.spriteImg.complete && this.spriteImg.naturalWidth > 0) {
+        this.spriteLoaded = true;
+        return;
+      }
+      this.spriteImg.addEventListener('load', () => {
+        this.spriteLoaded = true;
+      });
+      this.spriteImg.addEventListener('error', (e) => {
+        console.error('Failed to load player sprite:', e);
+      });
+      if (!this.spriteImg.src) {
+        this.spriteImg.src = 'assets/quadruped_cat.png';
+      }
+    }
   }
 
   update(inputs, stage) {
@@ -1160,7 +1174,7 @@ class Player {
       ctx.fill();
     }
 
-    if (this.spriteLoaded && this.spriteImg) {
+    if ((this.spriteLoaded || (this.spriteImg && (this.spriteImg._loaded || (this.spriteImg.complete && this.spriteImg.naturalWidth > 0)))) && this.spriteImg) {
       const sheetW = this.spriteImg.naturalWidth || this.spriteImg.width;
       const sheetH = this.spriteImg.naturalHeight || this.spriteImg.height;
       const colW = sheetW / 4;

@@ -13,66 +13,83 @@ class Stage {
     this.cogs = [];
     this.timer = 0;
 
-    // 🌟 ステージ1美麗AI背景（桜キャットパレス）の読み込み
+    // 🌟 全ステージ美麗AI背景の先行取得（AssetManager連携）
+    const getBg = (src) => {
+      if (typeof AssetManager !== 'undefined') {
+        const img = AssetManager.getImage(src);
+        const loaded = Boolean(img && (img._loaded || (img.complete && img.naturalWidth > 0)));
+        return { img, loaded };
+      }
+      const img = new Image();
+      img.src = src;
+      return { img, loaded: false };
+    };
+
     if (this.stageNumber === 1) {
-      this.palaceBgImg = new Image();
-      this.palaceBgLoaded = false;
-      this.palaceBgImg.onload = () => { this.palaceBgLoaded = true; };
-      this.palaceBgImg.onerror = (e) => { console.warn('Palace BG load failed, fallback to vector:', e); };
-      this.palaceBgImg.src = 'assets/stage1_palace_bg.jpg';
+      const res = getBg('assets/stage1_palace_bg.jpg');
+      this.palaceBgImg = res.img;
+      this.palaceBgLoaded = res.loaded;
+      if (!this.palaceBgLoaded && this.palaceBgImg && this.palaceBgImg.addEventListener) {
+        this.palaceBgImg.addEventListener('load', () => { this.palaceBgLoaded = true; });
+      }
     } else if (this.stageNumber === 2) {
-      // 🌟 ステージ2美麗AI背景（ネオン・ショッピングモール）の読み込み
-      this.mallBgImg = new Image();
-      this.mallBgLoaded = false;
-      this.mallBgImg.onload = () => { this.mallBgLoaded = true; };
-      this.mallBgImg.onerror = (e) => { console.warn('Mall BG load failed, fallback to vector:', e); };
-      this.mallBgImg.src = 'assets/stage2_mall_bg.jpg';
+      const res = getBg('assets/stage2_mall_bg.jpg');
+      this.mallBgImg = res.img;
+      this.mallBgLoaded = res.loaded;
+      if (!this.mallBgLoaded && this.mallBgImg && this.mallBgImg.addEventListener) {
+        this.mallBgImg.addEventListener('load', () => { this.mallBgLoaded = true; });
+      }
     } else if (this.stageNumber === 3) {
-      // 🌟 ステージ3美麗AI背景（月夜の歯車時計塔ペントハウス）の読み込み
-      this.clockBgImg = new Image();
-      this.clockBgLoaded = false;
-      this.clockBgImg.onload = () => { this.clockBgLoaded = true; };
-      this.clockBgImg.onerror = (e) => { console.warn('Clock BG load failed, fallback to vector:', e); };
-      this.clockBgImg.src = 'assets/stage3_clock_bg.jpg';
+      const res = getBg('assets/stage3_clock_bg.jpg');
+      this.clockBgImg = res.img;
+      this.clockBgLoaded = res.loaded;
+      if (!this.clockBgLoaded && this.clockBgImg && this.clockBgImg.addEventListener) {
+        this.clockBgImg.addEventListener('load', () => { this.clockBgLoaded = true; });
+      }
     } else if (this.stageNumber === 4) {
-      // 🌟 ステージ4美麗AI背景（激闘！グルメ寿司屋敷＆厨房）の読み込み
-      this.sushiBgImg = new Image();
-      this.sushiBgLoaded = false;
-      this.sushiBgImg.onload = () => { this.sushiBgLoaded = true; };
-      this.sushiBgImg.onerror = (e) => { console.warn('Sushi BG load failed, fallback to vector:', e); };
-      this.sushiBgImg.src = 'assets/stage4_sushi_bg.jpg';
+      const res = getBg('assets/stage4_sushi_bg.jpg');
+      this.sushiBgImg = res.img;
+      this.sushiBgLoaded = res.loaded;
+      if (!this.sushiBgLoaded && this.sushiBgImg && this.sushiBgImg.addEventListener) {
+        this.sushiBgImg.addEventListener('load', () => { this.sushiBgLoaded = true; });
+      }
     } else if (this.stageNumber === 5) {
-      // 🌟 ステージ5美麗AI背景（トロピカル・キャットビーチ）の読み込み
-      this.beachBgImg = new Image();
-      this.beachBgLoaded = false;
-      this.beachBgImg.onload = () => { this.beachBgLoaded = true; };
-      this.beachBgImg.onerror = (e) => { console.warn('Beach BG load failed, fallback to vector:', e); };
-      this.beachBgImg.src = 'assets/stage5_beach_bg.jpg';
+      const res = getBg('assets/stage5_beach_bg.jpg');
+      this.beachBgImg = res.img;
+      this.beachBgLoaded = res.loaded;
+      if (!this.beachBgLoaded && this.beachBgImg && this.beachBgImg.addEventListener) {
+        this.beachBgImg.addEventListener('load', () => { this.beachBgLoaded = true; });
+      }
     } else if (this.stageNumber === 6) {
-      // 🌟 ステージ6美麗AI背景（ゴースト洋館）の読み込み
-      this.ghostBgImg = new Image();
-      this.ghostBgLoaded = false;
-      this.ghostBgImg.onload = () => { this.ghostBgLoaded = true; };
-      this.ghostBgImg.onerror = (e) => { console.warn('Ghost BG load failed, fallback to vector:', e); };
-      this.ghostBgImg.src = 'assets/stage6_ghost_bg.jpg';
+      const res = getBg('assets/stage6_ghost_bg.jpg');
+      this.ghostBgImg = res.img;
+      this.ghostBgLoaded = res.loaded;
+      if (!this.ghostBgLoaded && this.ghostBgImg && this.ghostBgImg.addEventListener) {
+        this.ghostBgImg.addEventListener('load', () => { this.ghostBgLoaded = true; });
+      }
     } else if (this.stageNumber === 7) {
-      // 🌟 ステージ7美麗AI背景（コズミック宇宙）の読み込み
-      this.spaceBgImg = new Image();
-      this.spaceBgLoaded = false;
-      this.spaceBgImg.onload = () => { this.spaceBgLoaded = true; };
-      this.spaceBgImg.onerror = (e) => { console.warn('Space BG load failed, fallback to vector:', e); };
-      this.spaceBgImg.src = 'assets/stage7_space_bg.jpg';
+      const res = getBg('assets/stage7_space_bg.jpg');
+      this.spaceBgImg = res.img;
+      this.spaceBgLoaded = res.loaded;
+      if (!this.spaceBgLoaded && this.spaceBgImg && this.spaceBgImg.addEventListener) {
+        this.spaceBgImg.addEventListener('load', () => { this.spaceBgLoaded = true; });
+      }
     } else if (this.stageNumber === 8) {
-      // 🌟 ステージ8美麗AI背景（天空宮殿・神聖サンライズ）の読み込み
-      this.castleBgImg = new Image();
-      this.castleBgLoaded = false;
-      this.castleBgImg.onload = () => { this.castleBgLoaded = true; };
-      this.castleBgImg.onerror = (e) => { console.warn('Castle BG load failed, fallback to vector:', e); };
-      this.castleBgImg.src = 'assets/stage8_castle_bg.jpg';
+      const res = getBg('assets/stage8_castle_bg.jpg');
+      this.castleBgImg = res.img;
+      this.castleBgLoaded = res.loaded;
+      if (!this.castleBgLoaded && this.castleBgImg && this.castleBgImg.addEventListener) {
+        this.castleBgImg.addEventListener('load', () => { this.castleBgLoaded = true; });
+      }
     }
 
     this.initMap();
     this.initBackgroundElements();
+  }
+
+  isBgReady(img, flag) {
+    if (!img) return false;
+    return Boolean(flag || img._loaded || (img.complete && img.naturalWidth > 0));
   }
 
   initBackgroundElements() {
@@ -967,7 +984,7 @@ class Stage {
   // 🏞️ ステージ1: 桜キャットパレス（絵本・カービィ調パステルガーデン）
   // -------------------------------------------------------------------------
   drawPalaceBackground(ctx, cameraX) {
-    if (this.palaceBgLoaded && this.palaceBgImg) {
+    if (this.isBgReady(this.palaceBgImg, this.palaceBgLoaded)) {
       // 🌟 軍曹ご提供の超ワイド・桜キャットパレス（1024x320）の描画
       const bgW = this.palaceBgImg.naturalWidth || 1024;
       const bgH = this.palaceBgImg.naturalHeight || 320;
@@ -1333,7 +1350,7 @@ class Stage {
   // 🛍️ ステージ2: ネオン・ショッピングモール（80sパステルディスコモール）
   // -------------------------------------------------------------------------
   drawMallBackground(ctx, cameraX) {
-    if (this.mallBgLoaded && this.mallBgImg) {
+    if (this.isBgReady(this.mallBgImg, this.mallBgLoaded)) {
       // 🌟 軍曹ご提供の超ワイド・サイバーネオンモール（1024x317）の描画
       const bgW = this.mallBgImg.naturalWidth || 1024;
       const bgH = this.mallBgImg.naturalHeight || 317;
@@ -1527,7 +1544,7 @@ class Stage {
   // 🕰️ ステージ3: 最上階ペントハウス・時計塔背景
   // -------------------------------------------------------------------------
   drawClocktowerBackground(ctx, cameraX) {
-    if (this.clockBgLoaded && this.clockBgImg) {
+    if (this.isBgReady(this.clockBgImg, this.clockBgLoaded)) {
       // 🌟 軍曹ご提供の超ワイド・月夜の歯車時計塔（2241x702, 3.19:1）の描画
       const bgW = this.clockBgImg.naturalWidth || 2241;
       const bgH = this.clockBgImg.naturalHeight || 702;
@@ -1765,7 +1782,7 @@ class Stage {
   // 🍣 ステージ4: 激闘！グルメ寿司屋敷＆厨房（和風祭囃子キッチン）
   // -------------------------------------------------------------------------
   drawKitchenBackground(ctx, cameraX) {
-    if (this.sushiBgLoaded && this.sushiBgImg) {
+    if (this.isBgReady(this.sushiBgImg, this.sushiBgLoaded)) {
       // 🌟 【案A】美麗AI背景（和風寿司屋敷＆厨房）：ミラー反転シームレス ＆ ボス戦厨房中央固定
       const bgW = 1672;
       const bgH = 941;
@@ -1983,7 +2000,7 @@ class Stage {
   // 🏖️ ステージ5: トロピカル・キャットビーチ（常夏サンバビーチ）
   // -------------------------------------------------------------------------
   drawBeachBackground(ctx, cameraX) {
-    if (this.beachBgLoaded && this.beachBgImg) {
+    if (this.isBgReady(this.beachBgImg, this.beachBgLoaded)) {
       // 🌟 軍曹ご提供の超ワイド・常夏キャットビーチ（2216x709, 3.12:1）の描画
       const bgW = this.beachBgImg.naturalWidth || 2216;
       const bgH = this.beachBgImg.naturalHeight || 709;
@@ -2225,7 +2242,7 @@ class Stage {
   // 👻 ステージ6: 妖怪・ゴーストキャットマンション（ポップゴシック洋館）
   // -------------------------------------------------------------------------
   drawGhostBackground(ctx, cameraX) {
-    if (this.ghostBgLoaded && this.ghostBgImg) {
+    if (this.isBgReady(this.ghostBgImg, this.ghostBgLoaded)) {
       // 🌟 【案A】美麗AI背景（ゴースト洋館）：ミラー反転シームレス ＆ ボス戦中央大ステンドグラス固定
       const bgW = 1672;
       const bgH = 941;
@@ -2466,7 +2483,7 @@ class Stage {
   // 🚀 ステージ7: コズミック・キャットスペース（銀河スペースオペラ）
   // -------------------------------------------------------------------------
   drawSpaceBackground(ctx, cameraX) {
-    if (this.spaceBgLoaded && this.spaceBgImg) {
+    if (this.isBgReady(this.spaceBgImg, this.spaceBgLoaded)) {
       const bgW = this.spaceBgImg.naturalWidth || 1024;
       const bgH = this.spaceBgImg.naturalHeight || 317;
 
@@ -2645,7 +2662,7 @@ class Stage {
 
   // -------------------------------------------------------------------------
   drawCastleBackground(ctx, cameraX) {
-    if (this.castleBgLoaded && this.castleBgImg) {
+    if (this.isBgReady(this.castleBgImg, this.castleBgLoaded)) {
       // 🌟 軍曹ご提供の超ワイド・天空城最終決戦（1024x336）の描画
       const bgW = this.castleBgImg.naturalWidth || 1024;
       const bgH = this.castleBgImg.naturalHeight || 336;

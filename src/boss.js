@@ -39,6 +39,23 @@ function drawBossShadow(ctx, x, y, width, height, cameraX, isAir = false) {
   ctx.restore();
 }
 
+// 🌟 全ボス共通のAssetManager画像取得＆ロード判定ヘルパー
+function getBossSprite(src) {
+  if (typeof AssetManager !== 'undefined') {
+    const img = AssetManager.getImage(src);
+    const loaded = Boolean(img && (img._loaded || (img.complete && img.naturalWidth > 0)));
+    return { img, loaded };
+  }
+  const img = new Image();
+  img.src = src;
+  return { img, loaded: false };
+}
+
+function isBossSpriteReady(img, loadedFlag) {
+  if (!img) return false;
+  return Boolean(loadedFlag || img._loaded || (img.complete && img.naturalWidth > 0));
+}
+
 // =============================================================================
 // 🐟 ステージ1弾: 黄金たい焼きスナック弾
 // =============================================================================
@@ -253,15 +270,16 @@ class LuxuryBossCat {
     this.motionState = 'idle';
     this.motionTimer = 0;
 
-    this.spriteImg = new Image();
-    this.spriteLoaded = false;
-    this.loadSprite();
+    const res = getBossSprite('assets/boss_sheet.png');
+    this.spriteImg = res.img;
+    this.spriteLoaded = res.loaded;
+    if (!this.spriteLoaded && this.spriteImg && this.spriteImg.addEventListener) {
+      this.spriteImg.addEventListener('load', () => { this.spriteLoaded = true; });
+    }
   }
 
   loadSprite() {
-    this.spriteImg.onload = () => { this.spriteLoaded = true; };
-    this.spriteImg.onerror = (e) => { console.error('Failed to load boss sprite:', e); };
-    this.spriteImg.src = 'assets/boss_sheet.png';
+    this.spriteLoaded = isBossSpriteReady(this.spriteImg, this.spriteLoaded);
   }
 
   update(player) {
@@ -379,7 +397,7 @@ class LuxuryBossCat {
       ctx.scale(scaleX, scaleY);
     }
 
-    if (this.spriteLoaded && this.spriteImg) {
+    if (isBossSpriteReady(this.spriteImg, this.spriteLoaded)) {
       const sheetW = this.spriteImg.naturalWidth || this.spriteImg.width;
       const sheetH = this.spriteImg.naturalHeight || this.spriteImg.height;
       const colW = sheetW / 3;
@@ -411,11 +429,6 @@ class LuxuryBossCat {
         sx, sy, colW, rowH,
         -renderSize / 2, -renderSize / 2, renderSize, renderSize
       );
-    } else {
-      ctx.fillStyle = '#ffd166';
-      ctx.beginPath();
-      ctx.arc(0, 0, 48, 0, Math.PI * 2);
-      ctx.fill();
     }
 
     ctx.restore();
@@ -477,10 +490,12 @@ class ShoppingBossCat {
     this.damageFlash = 0;
     this.rushDir = -1;
 
-    this.spriteImg = new Image();
-    this.spriteLoaded = false;
-    this.spriteImg.onload = () => { this.spriteLoaded = true; };
-    this.spriteImg.src = 'assets/boss2_sheet.png';
+    const res = getBossSprite('assets/boss2_sheet.png');
+    this.spriteImg = res.img;
+    this.spriteLoaded = res.loaded;
+    if (!this.spriteLoaded && this.spriteImg && this.spriteImg.addEventListener) {
+      this.spriteImg.addEventListener('load', () => { this.spriteLoaded = true; });
+    }
   }
 
   update(player) {
@@ -597,7 +612,7 @@ class ShoppingBossCat {
 
     const isRage = this.isRaging();
 
-    if (this.spriteLoaded && this.spriteImg) {
+    if (isBossSpriteReady(this.spriteImg, this.spriteLoaded)) {
       const sheetW = this.spriteImg.naturalWidth || this.spriteImg.width;
       const sheetH = this.spriteImg.naturalHeight || this.spriteImg.height;
       const colW = sheetW / 3;
@@ -623,11 +638,6 @@ class ShoppingBossCat {
         col * colW, row * rowH, colW, rowH,
         -renderSize / 2, -renderSize / 2, renderSize, renderSize
       );
-    } else {
-      ctx.fillStyle = '#ff758f';
-      ctx.beginPath();
-      ctx.arc(0, 0, 48, 0, Math.PI * 2);
-      ctx.fill();
     }
 
     ctx.restore();
@@ -689,10 +699,12 @@ class GodfatherBossCat {
     this.damageFlash = 0;
     this.teleportTimer = 0;
 
-    this.spriteImg = new Image();
-    this.spriteLoaded = false;
-    this.spriteImg.onload = () => { this.spriteLoaded = true; };
-    this.spriteImg.src = 'assets/boss3_sheet.png';
+    const res = getBossSprite('assets/boss3_sheet.png');
+    this.spriteImg = res.img;
+    this.spriteLoaded = res.loaded;
+    if (!this.spriteLoaded && this.spriteImg && this.spriteImg.addEventListener) {
+      this.spriteImg.addEventListener('load', () => { this.spriteLoaded = true; });
+    }
   }
 
   update(player) {
@@ -825,7 +837,7 @@ class GodfatherBossCat {
 
     const isRage = this.isRaging();
 
-    if (this.spriteLoaded && this.spriteImg) {
+    if (isBossSpriteReady(this.spriteImg, this.spriteLoaded)) {
       const sheetW = this.spriteImg.naturalWidth || this.spriteImg.width;
       const sheetH = this.spriteImg.naturalHeight || this.spriteImg.height;
       const colW = sheetW / 3;
@@ -851,11 +863,6 @@ class GodfatherBossCat {
         col * colW, row * rowH, colW, rowH,
         -renderSize / 2, -renderSize / 2, renderSize, renderSize
       );
-    } else {
-      ctx.fillStyle = '#2b2d42';
-      ctx.beginPath();
-      ctx.arc(0, 0, 48, 0, Math.PI * 2);
-      ctx.fill();
     }
 
     ctx.restore();
@@ -1053,10 +1060,12 @@ class ChefBossCat {
     this.timer = 0; this.attackCooldown = 80;
     this.bullets = []; this.isDead = false; this.damageFlash = 0;
 
-    this.spriteImg = new Image();
-    this.spriteLoaded = false;
-    this.spriteImg.onload = () => { this.spriteLoaded = true; };
-    this.spriteImg.src = 'assets/boss4_sheet.png';
+    const res = getBossSprite('assets/boss4_sheet.png');
+    this.spriteImg = res.img;
+    this.spriteLoaded = res.loaded;
+    if (!this.spriteLoaded && this.spriteImg && this.spriteImg.addEventListener) {
+      this.spriteImg.addEventListener('load', () => { this.spriteLoaded = true; });
+    }
   }
   update(player) {
     if (this.isDead) return;
@@ -1120,7 +1129,7 @@ class ChefBossCat {
 
     const isRage = this.isRaging();
 
-    if (this.spriteLoaded && this.spriteImg) {
+    if (isBossSpriteReady(this.spriteImg, this.spriteLoaded)) {
       const sheetW = this.spriteImg.naturalWidth || this.spriteImg.width;
       const sheetH = this.spriteImg.naturalHeight || this.spriteImg.height;
       const colW = sheetW / 3;
@@ -1146,9 +1155,6 @@ class ChefBossCat {
         col * colW, row * rowH, colW, rowH,
         -renderSize / 2, -renderSize / 2, renderSize, renderSize
       );
-    } else {
-      ctx.fillStyle = '#ff9900';
-      ctx.beginPath(); ctx.arc(0, 0, 48, 0, Math.PI * 2); ctx.fill();
     }
 
     ctx.restore();
@@ -1175,10 +1181,12 @@ class SurfBossCat {
     this.timer = 0; this.attackCooldown = 70;
     this.bullets = []; this.isDead = false; this.damageFlash = 0;
 
-    this.spriteImg = new Image();
-    this.spriteLoaded = false;
-    this.spriteImg.onload = () => { this.spriteLoaded = true; };
-    this.spriteImg.src = 'assets/boss5_sheet.png';
+    const res = getBossSprite('assets/boss5_sheet.png');
+    this.spriteImg = res.img;
+    this.spriteLoaded = res.loaded;
+    if (!this.spriteLoaded && this.spriteImg && this.spriteImg.addEventListener) {
+      this.spriteImg.addEventListener('load', () => { this.spriteLoaded = true; });
+    }
   }
   update(player) {
     if (this.isDead) return;
@@ -1240,7 +1248,7 @@ class SurfBossCat {
 
     const isRage = this.isRaging();
 
-    if (this.spriteLoaded && this.spriteImg) {
+    if (isBossSpriteReady(this.spriteImg, this.spriteLoaded)) {
       const sheetW = this.spriteImg.naturalWidth || this.spriteImg.width;
       const sheetH = this.spriteImg.naturalHeight || this.spriteImg.height;
       const colW = sheetW / 3;
@@ -1266,9 +1274,6 @@ class SurfBossCat {
         col * colW, row * rowH, colW, rowH,
         -renderSize / 2, -renderSize / 2, renderSize, renderSize
       );
-    } else {
-      ctx.fillStyle = '#ffaa00';
-      ctx.beginPath(); ctx.arc(0, 0, 48, 0, Math.PI * 2); ctx.fill();
     }
 
     ctx.restore();
@@ -1296,10 +1301,12 @@ class GhostBossCat {
     this.bullets = []; this.isDead = false; this.damageFlash = 0;
     this.teleportTimer = 0;
 
-    this.spriteImg = new Image();
-    this.spriteLoaded = false;
-    this.spriteImg.onload = () => { this.spriteLoaded = true; };
-    this.spriteImg.src = 'assets/boss6_sheet.png';
+    const res = getBossSprite('assets/boss6_sheet.png');
+    this.spriteImg = res.img;
+    this.spriteLoaded = res.loaded;
+    if (!this.spriteLoaded && this.spriteImg && this.spriteImg.addEventListener) {
+      this.spriteImg.addEventListener('load', () => { this.spriteLoaded = true; });
+    }
   }
   update(player) {
     if (this.isDead) return;
@@ -1374,7 +1381,7 @@ class GhostBossCat {
 
     const isRage = this.isRaging();
 
-    if (this.spriteLoaded && this.spriteImg) {
+    if (isBossSpriteReady(this.spriteImg, this.spriteLoaded)) {
       const sheetW = this.spriteImg.naturalWidth || this.spriteImg.width;
       const sheetH = this.spriteImg.naturalHeight || this.spriteImg.height;
       const colW = sheetW / 3;
@@ -1402,9 +1409,6 @@ class GhostBossCat {
         col * colW, row * rowH, colW, rowH,
         -renderSize / 2, -renderSize / 2, renderSize, renderSize
       );
-    } else {
-      ctx.fillStyle = '#a020f0';
-      ctx.beginPath(); ctx.arc(0, 0, 48, 0, Math.PI * 2); ctx.fill();
     }
 
     ctx.restore();
@@ -1435,10 +1439,12 @@ class SpaceBossCat {
     this.diveState = 'none';
     this.diveTimer = 0;
 
-    this.spriteImg = new Image();
-    this.spriteLoaded = false;
-    this.spriteImg.onload = () => { this.spriteLoaded = true; };
-    this.spriteImg.src = 'assets/boss7_sheet.png';
+    const res = getBossSprite('assets/boss7_sheet.png');
+    this.spriteImg = res.img;
+    this.spriteLoaded = res.loaded;
+    if (!this.spriteLoaded && this.spriteImg && this.spriteImg.addEventListener) {
+      this.spriteImg.addEventListener('load', () => { this.spriteLoaded = true; });
+    }
   }
 
   update(player) {
@@ -1602,7 +1608,7 @@ class SpaceBossCat {
 
     const isRage = this.isRaging();
 
-    if (this.spriteLoaded && this.spriteImg) {
+    if (isBossSpriteReady(this.spriteImg, this.spriteLoaded)) {
       const sheetW = this.spriteImg.naturalWidth || this.spriteImg.width;
       const sheetH = this.spriteImg.naturalHeight || this.spriteImg.height;
       const colW = sheetW / 3;
@@ -1630,9 +1636,6 @@ class SpaceBossCat {
         col * colW, row * rowH, colW, rowH,
         -renderSize / 2, -renderSize / 2, renderSize, renderSize
       );
-    } else {
-      ctx.fillStyle = '#4b0082';
-      ctx.beginPath(); ctx.arc(0, 0, 48, 0, Math.PI * 2); ctx.fill();
     }
 
     ctx.restore();
@@ -1660,10 +1663,12 @@ class TrueGodfatherBossCat {
     this.timer = 0; this.attackCooldown = 70;
     this.bullets = []; this.isDead = false; this.damageFlash = 0;
 
-    this.spriteImg = new Image();
-    this.spriteLoaded = false;
-    this.spriteImg.onload = () => { this.spriteLoaded = true; };
-    this.spriteImg.src = 'assets/boss8_sheet.png';
+    const res = getBossSprite('assets/boss8_sheet.png');
+    this.spriteImg = res.img;
+    this.spriteLoaded = res.loaded;
+    if (!this.spriteLoaded && this.spriteImg && this.spriteImg.addEventListener) {
+      this.spriteImg.addEventListener('load', () => { this.spriteLoaded = true; });
+    }
   }
   update(player) {
     if (this.isDead) return;
@@ -1730,7 +1735,7 @@ class TrueGodfatherBossCat {
 
     const isRage = this.isRaging();
 
-    if (this.spriteLoaded && this.spriteImg) {
+    if (isBossSpriteReady(this.spriteImg, this.spriteLoaded)) {
       const sheetW = this.spriteImg.naturalWidth || this.spriteImg.width;
       const sheetH = this.spriteImg.naturalHeight || this.spriteImg.height;
       const colW = sheetW / 3;
@@ -1760,9 +1765,6 @@ class TrueGodfatherBossCat {
         col * colW, row * rowH, colW, rowH,
         -renderSize / 2, -renderSize / 2, renderSize, renderSize
       );
-    } else {
-      ctx.fillStyle = '#ffb703';
-      ctx.beginPath(); ctx.arc(0, 0, 48, 0, Math.PI * 2); ctx.fill();
     }
 
     ctx.restore();

@@ -230,16 +230,18 @@ class Game {
     this.paradeTimer = 0;
 
     // 🌟 タイトル画面キービジュアル一枚絵の読み込み
-    this.titleBgImg = new Image();
-    this.titleBgLoaded = false;
-    this.titleBgImg.onload = () => { this.titleBgLoaded = true; };
-    this.titleBgImg.src = 'assets/title_key_visual.jpg';
+    this.titleBgImg = (typeof AssetManager !== 'undefined') ? AssetManager.getImage('assets/title_key_visual.jpg') : new Image();
+    this.titleBgLoaded = Boolean(this.titleBgImg && (this.titleBgImg._loaded || (this.titleBgImg.complete && this.titleBgImg.naturalWidth > 0)));
+    if (!this.titleBgLoaded && this.titleBgImg && this.titleBgImg.addEventListener) {
+      this.titleBgImg.addEventListener('load', () => { this.titleBgLoaded = true; });
+    }
 
     // 🎊 エンディング祝祭大パレード一枚絵の読み込み
-    this.endingBgImg = new Image();
-    this.endingBgLoaded = false;
-    this.endingBgImg.onload = () => { this.endingBgLoaded = true; };
-    this.endingBgImg.src = 'assets/ending_visual.jpg';
+    this.endingBgImg = (typeof AssetManager !== 'undefined') ? AssetManager.getImage('assets/ending_visual.jpg') : new Image();
+    this.endingBgLoaded = Boolean(this.endingBgImg && (this.endingBgImg._loaded || (this.endingBgImg.complete && this.endingBgImg.naturalWidth > 0)));
+    if (!this.endingBgLoaded && this.endingBgImg && this.endingBgImg.addEventListener) {
+      this.endingBgImg.addEventListener('load', () => { this.endingBgLoaded = true; });
+    }
 
     // 🎬 ボス登場シネマティック演出プロパティ（たけし・こけし・かなで・できすぎ監修）
     this.timeScale = 1.0;
@@ -2060,40 +2062,86 @@ class Game {
     const d = this.introDialogs[this.introStep];
     if (!d) return;
 
-    const boxW = CONSTANTS.CANVAS_WIDTH - 120;
-    const boxH = 110;
-    const boxX = 60;
-    const boxY = CONSTANTS.CANVAS_HEIGHT - 135;
+    const boxW = CONSTANTS.CANVAS_WIDTH - 100; // 860px (左右50pxマージンで広々)
+    const boxH = 126; // 110から126へ拡張（2行テキストでもゆったり）
+    const boxX = 50;
+    const boxY = CONSTANTS.CANVAS_HEIGHT - 148;
 
-    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.94)';
+    // 白背景カード（ソフトシャドウ付き）
+    this.ctx.save();
+    this.ctx.shadowColor = 'rgba(0, 0, 0, 0.22)';
+    this.ctx.shadowBlur = 10;
+    this.ctx.shadowOffsetY = 4;
+    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.96)';
     this.ctx.beginPath();
-    this.ctx.roundRect(boxX, boxY, boxW, boxH, 16);
+    this.ctx.roundRect(boxX, boxY, boxW, boxH, 18);
     this.ctx.fill();
+    this.ctx.restore();
 
     this.ctx.lineWidth = 4;
     this.ctx.strokeStyle = '#ffd166';
     this.ctx.stroke();
 
+    // 話者バッジ（左上に浮かぶピル型バッジ）
+    const badgeW = 340;
+    const badgeH = 30;
     this.ctx.fillStyle = d.color;
     this.ctx.beginPath();
-    this.ctx.roundRect(boxX + 20, boxY - 14, 340, 28, 14);
+    this.ctx.roundRect(boxX + 24, boxY - 15, badgeW, badgeH, 15);
     this.ctx.fill();
+    this.ctx.lineWidth = 2;
+    this.ctx.strokeStyle = '#ffffff';
+    this.ctx.stroke();
 
     this.ctx.fillStyle = '#ffffff';
     this.ctx.font = 'bold 15px ' + CONSTANTS.FONT_FAMILY;
     this.ctx.textAlign = 'center';
-    this.ctx.fillText(d.speaker, boxX + 190, boxY + 5);
+    this.ctx.fillText(d.speaker, boxX + 24 + badgeW / 2, boxY + 5);
 
+    // 🌟 セリフテキスト描画（自動折り返し・複数行対応）
     this.ctx.fillStyle = '#2b2d42';
-    this.ctx.font = 'bold 17px ' + CONSTANTS.FONT_FAMILY;
     this.ctx.textAlign = 'left';
-    this.ctx.fillText(d.text, boxX + 30, boxY + 55);
+    const maxTextW = boxW - 60; // 800px
+
+    // テキストを行ごとに分割（最大幅を超える場合は句読点や文字幅で自動改行）
+    this.ctx.font = 'bold 16px ' + CONSTANTS.FONT_FAMILY;
+    const text = d.text || '';
+    const lines = [];
+
+    if (this.ctx.measureText(text).width <= maxTextW) {
+      lines.push(text);
+    } else {
+      let currentLine = '';
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const testLine = currentLine + char;
+        if (this.ctx.measureText(testLine).width > maxTextW && currentLine.length > 0) {
+          lines.push(currentLine);
+          currentLine = char;
+        } else {
+          currentLine = testLine;
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+    }
+
+    if (lines.length === 1) {
+      this.ctx.font = 'bold 17px ' + CONSTANTS.FONT_FAMILY;
+      this.ctx.fillText(lines[0], boxX + 30, boxY + 58);
+    } else {
+      this.ctx.font = 'bold 16px ' + CONSTANTS.FONT_FAMILY;
+      const lineHeight = 26;
+      const startY = boxY + 46;
+      for (let i = 0; i < lines.length; i++) {
+        this.ctx.fillText(lines[i], boxX + 30, startY + i * lineHeight);
+      }
+    }
 
     const pulse = (Math.sin(Date.now() / 200) + 1) * 0.5;
-    this.ctx.fillStyle = `rgba(255, 77, 109, ${0.6 + pulse * 0.4})`;
-    this.ctx.font = 'bold 14px ' + CONSTANTS.FONT_FAMILY;
+    this.ctx.fillStyle = `rgba(255, 77, 109, ${0.7 + pulse * 0.3})`;
+    this.ctx.font = 'bold 13px ' + CONSTANTS.FONT_FAMILY;
     this.ctx.textAlign = 'right';
-    this.ctx.fillText('▶ [Space] または 画面タップ でつぎへ', boxX + boxW - 25, boxY + boxH - 15);
+    this.ctx.fillText('▶ [Space] または 画面タップ でつぎへ', boxX + boxW - 25, boxY + boxH - 12);
   }
 
   drawTitleScreen() {
