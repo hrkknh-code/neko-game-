@@ -1,0 +1,562 @@
+/* style.css - ポップ＆キュートなゲームUIスタイリング */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+input, textarea {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+button {
+  font-family: inherit;
+}
+
+body {
+  background: linear-gradient(135deg, #e3f2fd 0%, #fce4ec 100%);
+  font-family: 'Fredoka', 'M PLUS Rounded 1c', 'Hiragino Maru Gothic ProN', 'Yu Gothic UI', sans-serif;
+  font-weight: 700;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  overflow-x: hidden;
+  padding: 10px;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 980px;
+  width: 100%;
+}
+
+.debug-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  align-items: center;
+  width: 100%;
+  max-width: 960px;
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+
+.stage-warp-btn {
+  background: #ffffff;
+  color: #495057;
+  border: 2px solid #ffd1dc;
+  border-radius: 18px;
+  padding: 5px 11px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: transform 0.1s, background 0.1s;
+}
+
+.stage-warp-btn:hover {
+  background: #fff0f3;
+  transform: scale(1.05);
+}
+
+.boss-warp-btn {
+  background: linear-gradient(135deg, #ffd166 0%, #ffb703 100%);
+  color: #2b2d42;
+  border: 2px solid #fff;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  transition: transform 0.1s, filter 0.1s;
+}
+
+.boss-warp-btn:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+.boss-warp-btn:active {
+  transform: scale(0.95);
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  aspect-ratio: 16 / 9;
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(255, 77, 109, 0.25);
+  border: 4px solid #ffffff;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: transparent;
+}
+
+/* スマホ用タッチ操作パネル */
+.touch-controls {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 960px;
+  margin-top: 12px;
+  padding: 0 10px;
+}
+
+.action-buttons-left, .d-pad-right {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.touch-btn {
+  background: #ffffff;
+  border: 3px solid #ffccd5;
+  border-radius: 50px;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ff4d6d;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.08s, background-color 0.08s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.touch-btn:active {
+  transform: scale(0.92);
+  background-color: #ffccd5;
+}
+
+.touch-btn.jump-btn {
+  background: #ff758f;
+  color: #ffffff;
+  border-color: #ff4d6d;
+}
+
+.touch-btn.attack-btn {
+  background: #ffd166;
+  color: #4a3e1b;
+  border-color: #f7b731;
+}
+
+@media (max-width: 768px) {
+  .action-buttons-left, .d-pad-right {
+    gap: 8px;
+  }
+  .touch-btn {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+}
+
+/* ==========================================================================
+   🏆 全国ハイスコアランキング モーダルスタイル（星のカービィ風ポップデザイン）
+   ========================================================================== */
+.ranking-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(18, 0, 43, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+  animation: fadeInModal 0.2s ease-out;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.ranking-modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  background: linear-gradient(180deg, #ffffff 0%, #fffbf2 100%);
+  border: 4px solid #ffd166;
+  border-radius: 24px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), 0 0 24px rgba(255, 209, 102, 0.4);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: #2b2d42;
+}
+
+.ranking-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f8f9fa;
+  border: 2px solid #dee2e6;
+  font-size: 18px;
+  font-weight: bold;
+  color: #6c757d;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.ranking-close-btn:hover {
+  background: #ff4d6d;
+  color: #fff;
+  border-color: #ff4d6d;
+  transform: rotate(90deg);
+}
+
+.ranking-header {
+  text-align: center;
+  padding: 16px 20px 14px;
+  background: linear-gradient(135deg, #fff0f3 0%, #fff8e7 100%);
+  border-bottom: 2px dashed #ffccd5;
+}
+
+.ranking-header h2 {
+  font-size: 24px;
+  color: #ff4d6d;
+  text-shadow: 1px 1px 0 #fff;
+  margin-bottom: 0;
+}
+
+/* スコア登録ボックス */
+.ranking-submit-box {
+  background: #fff0f5;
+  border: 2px solid #ffccd5;
+  border-radius: 16px;
+  margin: 12px 18px 6px;
+  padding: 12px 16px;
+  text-align: center;
+}
+
+.ranking-current-result {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.result-label {
+  font-size: 13px;
+  color: #6c757d;
+}
+
+.result-value {
+  font-size: 22px;
+  font-weight: 900;
+  color: #ff4d6d;
+}
+
+.result-stage {
+  font-size: 13px;
+  color: #4a4e69;
+}
+
+.ranking-input-group {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.ranking-input-group input {
+  flex: 1;
+  max-width: 240px;
+  padding: 8px 14px;
+  border: 2px solid #ffd166;
+  border-radius: 20px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: bold;
+  outline: none;
+  text-align: center;
+  background-color: #ffffff;
+  color: #1d3557;
+  cursor: text;
+  user-select: text;
+  -webkit-user-select: text;
+  pointer-events: auto;
+}
+
+.ranking-input-group input:focus {
+  border-color: #ff4d6d;
+  box-shadow: 0 0 8px rgba(255, 77, 109, 0.3);
+}
+
+.ranking-submit-btn {
+  background: linear-gradient(135deg, #ff4d6d 0%, #ff758f 100%);
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(255, 77, 109, 0.35);
+  transition: transform 0.1s, filter 0.1s;
+}
+
+.ranking-submit-btn:hover {
+  transform: scale(1.04);
+  filter: brightness(1.08);
+}
+
+.ranking-submit-btn:active {
+  transform: scale(0.96);
+}
+
+.ranking-submit-btn:disabled,
+.ranking-submit-btn.submitted {
+  background: #495057 !important;
+  color: #adb5bd !important;
+  border-color: #6c757d !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.ranking-input-group input:disabled {
+  background: #f1f3f5 !important;
+  color: #868e96 !important;
+  cursor: not-allowed !important;
+  border-color: #ced4da !important;
+}
+
+.ranking-status-msg {
+  font-size: 12.5px;
+  margin-top: 6px;
+  font-weight: bold;
+  min-height: 18px;
+}
+
+/* ランキング一覧テーブル */
+.ranking-list-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 18px;
+  min-height: 240px;
+  max-height: 340px;
+}
+
+.ranking-loading {
+  text-align: center;
+  padding: 30px;
+  font-size: 16px;
+  color: #ffb703;
+  animation: pulse 1s infinite alternate;
+}
+
+.ranking-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 5px;
+  font-size: 14px;
+}
+
+.ranking-table th {
+  padding: 6px 8px;
+  font-size: 12px;
+  color: #8d99ae;
+  border-bottom: 2px solid #f0f0f0;
+  text-align: center;
+}
+
+.ranking-table td {
+  padding: 9px 8px;
+  text-align: center;
+  background: #ffffff;
+  border-top: 1px solid #f5f5f5;
+  border-bottom: 1px solid #f5f5f5;
+  font-weight: bold;
+}
+
+.ranking-table tr td:first-child {
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  border-left: 1px solid #f5f5f5;
+}
+
+.ranking-table tr td:last-child {
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  border-right: 1px solid #f5f5f5;
+}
+
+.col-rank {
+  font-size: 13px;
+}
+
+.col-name {
+  text-align: left !important;
+  padding-left: 12px !important;
+  color: #1d3557;
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.col-score {
+  color: #d90429;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 15px;
+}
+
+.col-stage {
+  color: #457b9d;
+  font-size: 12px;
+}
+
+.col-char {
+  font-size: 16px;
+}
+
+/* メダル行のハイライト演出 */
+.rank-gold td {
+  background: linear-gradient(135deg, #fff9db 0%, #fff3bf 100%) !important;
+  border-color: #ffd43b !important;
+}
+.rank-gold .col-rank {
+  color: #f59f00;
+  font-size: 14px;
+}
+
+.rank-silver td {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+  border-color: #ced4da !important;
+}
+.rank-silver .col-rank {
+  color: #495057;
+}
+
+.rank-bronze td {
+  background: linear-gradient(135deg, #fff0eb 0%, #ffe0d6 100%) !important;
+  border-color: #ffc9b8 !important;
+}
+.rank-bronze .col-rank {
+  color: #d9480f;
+}
+
+/* 自分の順位ハイライト演出 */
+.my-rank-row td {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%) !important;
+  border-top-color: #38bdf8 !important;
+  border-bottom-color: #38bdf8 !important;
+  font-weight: bold;
+}
+.my-rank-row td:first-child {
+  border-left: 3px solid #0284c7 !important;
+}
+.my-rank-row td:last-child {
+  border-right: 3px solid #0284c7 !important;
+}
+
+.badge-you {
+  display: inline-block;
+  background: #ff007f;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 6px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 1px 4px rgba(255, 0, 127, 0.4);
+  vertical-align: middle;
+}
+
+/* 10位より下（11位〜1000位）の区切り行 */
+.rank-divider-row td {
+  background: transparent !important;
+  border: none !important;
+  padding: 10px 0 6px 0 !important;
+  text-align: center !important;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.rank-outside-top10 td {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+  border-top-color: #f59e0b !important;
+  border-bottom-color: #f59e0b !important;
+}
+.rank-outside-top10 td:first-child {
+  border-left: 3px solid #d97706 !important;
+}
+.rank-outside-top10 td:last-child {
+  border-right: 3px solid #d97706 !important;
+}
+.rank-outside-top10 .col-rank {
+  color: #b45309;
+  font-weight: bold;
+}
+
+/* フッターボタン */
+.ranking-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 18px 16px;
+  border-top: 2px solid #f0f0f0;
+  background: #fff;
+}
+
+.ranking-action-btn {
+  padding: 8px 18px;
+  border-radius: 18px;
+  font-size: 13.5px;
+  font-weight: bold;
+  cursor: pointer;
+  border: 2px solid #e0e0e0;
+  background: #f8f9fa;
+  color: #495057;
+  transition: all 0.1s;
+}
+
+.ranking-action-btn:hover {
+  background: #e9ecef;
+  transform: scale(1.03);
+}
+
+.ranking-action-btn.close {
+  background: #2b2d42;
+  color: #ffffff;
+  border-color: #2b2d42;
+}
+
+.ranking-action-btn.close:hover {
+  background: #4a4e69;
+  border-color: #4a4e69;
+}
+

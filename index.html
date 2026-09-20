@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🐾 にゃんこタウン大冒険！ 〜 おしゃまなぜいたくボスねこをやっつけろ！ 〜</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800;900&family=M+PLUS+Rounded+1c:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="game-container">
+    <!-- 開発デバッグ用ワープツールバー（?debug=1 時のみ表示） -->
+    <div class="debug-bar debug-tool" style="display: none;">
+      <button id="btnStage1" class="stage-warp-btn debug-tool" tabindex="-1" title="ステージ1へワープ">① 豪邸 (1)</button>
+      <button id="btnStage2" class="stage-warp-btn debug-tool" tabindex="-1" title="ステージ2へワープ">② モール (2)</button>
+      <button id="btnStage3" class="stage-warp-btn debug-tool" tabindex="-1" title="ステージ3へワープ">③ 時計塔 (3)</button>
+      <button id="btnStage4" class="stage-warp-btn debug-tool" tabindex="-1" title="ステージ4へワープ">④ 寿司屋 (4)</button>
+      <button id="btnStage5" class="stage-warp-btn debug-tool" tabindex="-1" title="ステージ5へワープ">⑤ ビーチ (5)</button>
+      <button id="btnStage6" class="stage-warp-btn debug-tool" tabindex="-1" title="ステージ6へワープ">⑥ 洋館 (6)</button>
+      <button id="btnStage7" class="stage-warp-btn debug-tool" tabindex="-1" title="ステージ7へワープ">⑦ 宇宙 (7)</button>
+      <button id="btnStage8" class="stage-warp-btn debug-tool" tabindex="-1" title="ステージ8へワープ">⑧ 天空城 (8)</button>
+      <button id="btnBossWarp" class="boss-warp-btn debug-tool" tabindex="-1" title="ボス戦へ直行">⚡ ボス (B)</button>
+      <button id="btnEnding" class="boss-warp-btn debug-tool" tabindex="-1" title="エンディング画面へ直行" style="background: linear-gradient(135deg, #ff4d6d 0%, #ff758f 100%); color: #fff; border-color: #ffd166;">🎊 ED画面 (E)</button>
+    </div>
+
+    <div class="canvas-wrapper">
+      <canvas id="gameCanvas"></canvas>
+    </div>
+
+    <!-- スマホ・タブレット用オンスクリーンコントローラー -->
+    <div class="touch-controls">
+      <div class="action-buttons-left">
+        <button class="touch-btn attack-btn" id="btnAttack" tabindex="-1">🐾/🍙 こうげき / 必殺技 (Z)</button>
+      </div>
+      <div class="d-pad-right">
+        <button class="touch-btn" id="btnLeft" tabindex="-1">◀ ひだり</button>
+        <button class="touch-btn jump-btn" id="btnJump" tabindex="-1">⬆ ジャンプ (Space)</button>
+        <button class="touch-btn" id="btnRight" tabindex="-1">みぎ ▶</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ゲームスクリプト群 -->
+  <script src="src/audio.js"></script>
+  <script src="src/constants.js"></script>
+  <script src="src/ranking.js"></script>
+  <script src="src/particles.js"></script>
+  <script src="src/player.js"></script>
+  <script src="src/enemies.js"></script>
+  <script src="src/boss.js"></script>
+  <script src="src/items.js"></script>
+  <script src="src/stage.js"></script>
+  <script src="src/game.js"></script>
+
+</body>
+</html>

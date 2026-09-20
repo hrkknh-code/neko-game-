@@ -1,0 +1,33 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Google Sheets / Docs
+*.gsheet
+*.gdoc
+
+# Temporary / Scratch files
+scratch/
+.system_generated/
+*.log
+
+# Design Mockups & Old Assets (軽量化のため公開リポジトリから除外)
+assets/bg.jpg
+assets/boss.jpg
+assets/hero.jpg
+assets/cat_spritesheet.jpg
+assets/mouse_spritesheet.jpg
+assets/quadruped_cat.jpg
+assets/boss_sheet.jpg
+assets/boss8_sheet_old_white_suit.png
+assets/boss_cat_concept_*.jpg
+assets/boss_sheet_old_cushion.png
+assets/cute_bratty_boss_*.jpg
+assets/gameplay_mockup_*.jpg
+assets/gameplay_simple_cute_*.jpg
+assets/hero_cat_concept_*.jpg
+assets/mansion_midground.jpg
+assets/mouse7_sheet_orig_grid.png
+assets/*_old_*.jpg
+assets/*_orig.jpg
+assets/_archive/
